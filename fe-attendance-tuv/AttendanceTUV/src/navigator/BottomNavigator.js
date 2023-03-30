@@ -1,48 +1,36 @@
 import React from 'react';
-import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {Image, StyleSheet, Text, View, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import HomeScreen from '../screens/Home';
 import LogScreen from '../screens/Log';
 import ProfileScreen from '../screens/Profile';
 
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function BottomNavigator() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
-      shifting={true}
-      sceneAnimationEnabled={true}
-      activeColor="#FFFFFF"
-      inactiveColor="#a8a8a8"
-      height={10}
-      barStyle={{
-        backgroundColor: '#001ED2',
-        height: 70,
-        alignSelf: 'auto',
-      }}
-      tabBarOptions={{
-        showLabel: true,
-        tabBarLabelStyle: {fontSize: 14, color: '#FFFFFF'},
+      screenOptions={{
         tabBarActiveTintColor: '#FFFFFF',
-        tabBarLabelStyle: {color: '#FFFFFF'},
+        tabBarInactiveTintColor: '#AAAAAA',
+        tabBarStyle: {position: 'absolute', backgroundColor: '#001ED2'},
       }}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({color}) => (
-            <Icon name="home-outline" color={color} size={26} />
-          ),
+          headerShown: false,
+          tabBarIcon: ({color}) => <Icon name="home" color={color} size={26} />,
         }}
       />
       <Tab.Screen
         name="Logs"
         component={LogScreen}
         options={{
+          headerShown: false,
           tabBarIcon: ({color}) => (
-            <Icon name="receipt-outline" color={color} size={26} />
+            <Icon name="receipt" color={color} size={26} />
           ),
         }}
       />
@@ -50,8 +38,9 @@ export default function BottomNavigator() {
         name="Profile"
         component={ProfileScreen}
         options={{
+          headerShown: false,
           tabBarIcon: ({color}) => (
-            <Icon name="person-outline" color={color} size={26} />
+            <Icon name="person" color={color} size={26} />
           ),
         }}
       />

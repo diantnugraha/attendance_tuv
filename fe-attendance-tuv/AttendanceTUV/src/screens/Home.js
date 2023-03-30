@@ -1,10 +1,9 @@
 import {Image, StyleSheet, Text, View, ScrollView} from 'react-native';
-import {Button, ActivityIndicator} from 'react-native-paper';
+import {Button} from 'react-native-paper';
 import ComponentCurrentDate from '../components/ComponentCurrentDate';
 import GetLocation from 'react-native-get-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect, useState} from 'react';
-import {CommonActions} from '@react-navigation/native';
 import DeviceInfo from 'react-native-device-info';
 import {attendanceIn, attendanceOut} from '../features/attendanceSlice';
 import {useDispatch, useSelector} from 'react-redux';
@@ -15,7 +14,6 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 import {detailAttendance} from '../features/detailAttendanceSlice';
 import {fetchDetailUser} from '../features/detailEmployeeSlice';
-import LogoutDialog from '../components/ComponentDialogLogout';
 import {fetchCurrentLocation} from '../features/locationSlice';
 
 export default function Home({navigation}) {
@@ -25,33 +23,26 @@ export default function Home({navigation}) {
   const detailUserAttendanceData = useSelector(
     state => state.detailAttendance.data,
   );
-  const getRoad = useSelector(state => state.locationUser.data);
 
   const [employee_latitude, setLatitude] = useState('');
   const [employee_longtitude, setLongitude] = useState('');
-  const [attendance_time_in, setCurrentTime] = useState(null);
-  const [attendance_time_out, setCurrentTimeOut] = useState(null);
   const [id_attendance, setDetailAttendance] = useState(null);
   const [employee_latitude_out, setLatitudeOut] = useState('');
   const [employee_longtitude_out, setLongitudeOut] = useState('');
-  const [user_detail, setUserDetail] = useState(null);
   const [employee_imei, setImei] = useState('');
   const [isToggled, setIsToggled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState('');
   const [isLogoutDialogVisible, setLogoutDialogVisible] = useState(false);
+  const [location, setLocation] = useState(null);
 
-  const [inDisabled, setInDisabled] = useState(false);
-  const [outDisabled, setOutDisabled] = useState(false);
-  const [errorIn, setErrorIn] = useState(false);
-
+  const getRoad = useSelector(state => state.locationUser.data);
   const getDeviceNumber = async () => {
     try {
       const uniqueId = await DeviceInfo.syncUniqueId();
       setImei(uniqueId);
-      console.log(uniqueId);
     } catch (err) {
-      console.log(err);
+      throw err;
     }
   };
 
@@ -63,46 +54,13 @@ export default function Home({navigation}) {
       });
       const latitude = location.latitude;
       const longitude = location.longitude;
+      setLocation({latitude, longitude});
       setLatitude(latitude);
       setLongitude(longitude);
       setLatitudeOut(latitude);
       setLongitudeOut(longitude);
     } catch (error) {
-      console.log(error);
-      const {code, message} = error;
-      console.warn(code, message);
-    }
-  };
-
-  // const handleCheckIn = async () => {
-  //   await AsyncStorage.removeItem('access_token');
-  //   await AsyncStorage.removeItem('id');
-  //   navigation.dispatch(
-  //     CommonActions.reset({
-  //       index: 0,
-  //       routes: [{name: 'Auth'}],
-  //     }),
-  //   );
-  // };
-
-  const attendanceCurrentTime = async () => {
-    try {
-      const currentDate = new Date();
-      let hours = currentDate.getHours();
-      let minutes = currentDate.getMinutes();
-      let seconds = currentDate.getSeconds();
-
-      hours = hours < 10 ? '0' + hours : hours;
-      minutes = minutes < 10 ? '0' + minutes : minutes;
-      seconds = seconds < 10 ? '0' + seconds : seconds;
-
-      const currentTime = hours + ':' + minutes + ':' + seconds;
-      setCurrentTime(currentTime);
-      setCurrentTimeOut(currentTime);
-    } catch (error) {
-      console.log(error);
-      const {code, message} = error;
-      console.warn(code, message);
+      throw error;
     }
   };
 
@@ -111,7 +69,6 @@ export default function Home({navigation}) {
       const result = await dispatch(
         attendanceIn({
           employee_imei,
-          attendance_time_in,
           employee_latitude,
           employee_longtitude,
         }),
@@ -121,7 +78,6 @@ export default function Home({navigation}) {
         throw result.error.message;
       }
     } catch (error) {
-      setStatus('in');
       throw error;
     }
   };
@@ -130,14 +86,11 @@ export default function Home({navigation}) {
     setTimeout(async () => {
       try {
         let data = await dispatch(detailAttendance());
-        console.log(data.payload.id, 'ini dari detail');
+
         let id = data.payload.id;
         setDetailAttendance(id);
-        console.log(id_attendance, 'ini detail');
       } catch (error) {
-        console.log(error);
-        const {code, message} = error;
-        console.warn(code, message);
+        throw error;
       }
     }, 2000);
   };
@@ -152,48 +105,36 @@ export default function Home({navigation}) {
         }),
       );
     } catch (error) {
-      console.log(error);
-      const {code, message} = error;
-      console.warn(code, message);
+      throw error;
     }
   };
 
-  const getNamedRoad = async () => {
-    try {
-      dispatch(
-        fetchCurrentLocation({
-          employee_latitude,
-          employee_longtitude,
-        }),
-      );
-    } catch (error) {
-      console.log(error);
-      const {code, message} = error;
-      console.warn(code, message);
-    }
-  };
+  // const getNamedRoad = async () => {
+  //   try {
+  //     dispatch(
+  //       fetchCurrentLocation({
+  //         employee_latitude,
+  //         employee_longtitude,
+  //       }),
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //     const {code, message} = error;
+  //     console.warn(code, message);
+  //   }
+  // };
+
+  useEffect(() => {
+    dispatch(fetchCurrentLocation(location));
+  }, [location]);
 
   useEffect(() => {
     getDeviceNumber();
     getCurrentLocation();
-    attendanceCurrentTime();
-    getNamedRoad();
     getStatus();
     dispatch(fetchDetailUser());
     dispatch(detailAttendance());
-    dispatch(fetchCurrentLocation());
   }, [dispatch]);
-
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('access_token');
-    await AsyncStorage.removeItem('id');
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{name: 'Auth'}],
-      }),
-    );
-  };
 
   const getStatus = async () => {
     setIsLoading(true);
@@ -205,7 +146,7 @@ export default function Home({navigation}) {
         setStatus('in');
       }
     } catch (error) {
-      console.error(error);
+      throw error;
     }
     setIsLoading(false);
   };
@@ -215,7 +156,6 @@ export default function Home({navigation}) {
     if (status === 'in') {
       try {
         await getCurrentLocation();
-        await attendanceCurrentTime();
         await postAttendance();
         await detailAttendanceUser();
         setStatus('out');
@@ -227,13 +167,12 @@ export default function Home({navigation}) {
       try {
         await detailAttendance();
         await getCurrentLocation();
-        await attendanceCurrentTime();
         await postAttendanceOut();
         await detailAttendanceUser();
         setStatus('in');
         await AsyncStorage.setItem('toggleStatus', 'in');
       } catch (error) {
-        console.error(error);
+        throw error;
       }
     }
 
@@ -275,15 +214,9 @@ export default function Home({navigation}) {
               Welcome Back, {detailUserData?.detailEmployee?.employee_nickname}{' '}
               !
             </Text>
-
-            {/* <Text
-              style={{
-                fontSize: 20,
-                color: 'black',
-                fontFamily: 'Poppins-SemiBold',
-              }}>
-              Current Time
-            </Text> */}
+            <Text style={styles.textReady}>
+              Are you ready to working today?
+            </Text>
           </View>
           <View style={styles.containerContentClock}>
             <ComponentLiveTime />
@@ -312,8 +245,8 @@ export default function Home({navigation}) {
               </Button>
               <View style={styles.containerLocation}>
                 <Icon
-                  name="location-outline"
-                  style={{marginTop: '5%'}}
+                  name="location"
+                  style={{marginTop: '5.5%'}}
                   size={18}
                   color="#808080"></Icon>
                 <Text
@@ -325,7 +258,7 @@ export default function Home({navigation}) {
               </View>
               <View style={styles.containerAttendanceContent}>
                 <View style={styles.containerStatus}>
-                  <Icon name="time-outline" size={40} color="#001ED2" />
+                  <Icon name="time" size={40} color="#001ED2" />
                   <Text style={styles.textStatus}>
                     {detailUserAttendanceData?.attendance_time_in.slice(0, 5)}
                   </Text>
@@ -335,7 +268,7 @@ export default function Home({navigation}) {
                   </Text>
                 </View>
                 <View style={styles.containerStatus}>
-                  <Icon name="timer-outline" size={40} color="#001ED2" />
+                  <Icon name="timer" size={40} color="#001ED2" />
                   <Text style={styles.textStatus}>
                     {detailUserAttendanceData?.attendance_time_out.slice(0, 5)}
                   </Text>
@@ -344,52 +277,19 @@ export default function Home({navigation}) {
                     Clock Out
                   </Text>
                 </View>
+                <View style={styles.containerStatus}>
+                  <Icon name="hourglass" size={40} color="#001ED2" />
+                  <Text style={styles.textStatus}>8 Hrs</Text>
+                  <Text
+                    style={{color: '#808080', fontFamily: 'Poppins-Regular'}}>
+                    Working Hr's
+                  </Text>
+                </View>
               </View>
-            </View>
-          </View>
-          {/* <View
-            style={{
-              marginHorizontal: '5%',
-              marginTop: '8%',
-              marginBottom: '5%',
-            }}>
-            <Text style={{fontSize: 20, fontWeight: 'bold', color: 'black'}}>
-              Attendance Status
-            </Text>
-          </View> */}
-
-          <View
-            style={{
-              marginHorizontal: '5%',
-              marginTop: '8%',
-            }}>
-            <Text style={{fontSize: 20, fontWeight: 'bold', color: 'black'}}>
-              Account
-            </Text>
-          </View>
-          <View style={styles.containerAccount}>
-            <View style={styles.containerLogout}>
-              <Button
-                icon="logout"
-                mode="contained"
-                textColor="#FFFFFF"
-                buttonColor="#001ED2"
-                onPress={() => setLogoutDialogVisible(true)}>
-                Logout
-              </Button>
-              <LogoutDialog
-                visible={isLogoutDialogVisible}
-                onDismiss={() => setLogoutDialogVisible(false)}
-                onLogout={handleLogout}
-              />
             </View>
           </View>
         </ScrollView>
       </View>
-
-      {/* <View style={styles.containerFooter}>
-        <Text style={styles.textCompany}>PT TÜV NORD Indonesia</Text>
-      </View> */}
     </>
   );
 }
@@ -422,8 +322,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-SemiBold',
     color: 'black',
     marginVertical: '1%',
-
     fontSize: 20,
+  },
+
+  textReady: {
+    fontFamily: 'Poppins-Reguler',
+    color: '#808080',
+    fontSize: 14,
   },
 
   containerContentClock: {

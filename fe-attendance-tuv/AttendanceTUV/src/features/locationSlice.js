@@ -3,9 +3,9 @@ import axios from 'axios';
 
 export const fetchCurrentLocation = createAsyncThunk(
   'user/location',
-  async ({employee_latitude, employee_longtitude}) => {
+  async ({latitude, longitude}) => {
     const respone = await axios.get(
-      `https://nominatim.openstreetmap.org/reverse?lat=${employee_latitude}&lon=${employee_longtitude}&format=json`,
+      `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
     );
     console.log(respone.data, 'ini dari roaaaaad');
     return respone.data;

@@ -9,19 +9,13 @@ import {ToastAndroid} from 'react-native';
 
 export const attendanceIn = createAsyncThunk(
   'attendance/attendanceIn',
-  async ({
-    employee_imei,
-    attendance_time_in,
-    employee_latitude,
-    employee_longtitude,
-  }) => {
+  async ({employee_imei, employee_latitude, employee_longtitude}) => {
     try {
       const token = await AsyncStorage.getItem('access_token');
       const response = await client.post(
         'users/attendance-in',
         {
           employee_imei,
-          attendance_time_in,
           employee_latitude,
           employee_longtitude,
         },
