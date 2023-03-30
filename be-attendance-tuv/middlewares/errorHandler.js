@@ -22,7 +22,7 @@ function errorHandle(error, request, respone, next) {
       break;
     case "invalid_credentials":
       code = 401;
-      message = "Invalid NIK or password";
+      message = "Invalid email or password";
       break;
     case "Unauthorized":
       code = 401;
@@ -38,7 +38,11 @@ function errorHandle(error, request, respone, next) {
       break;
     case "DATA_NOT_FOUND":
       code = 404;
-      message = `NIK not found`;
+      message = `Data not found`;
+      break;
+    case "status_check-in":
+      code = 400;
+      message = `Employee already check in today. Please check-in tomorow!`;
       break;
     case "invalid_imei":
       code = 401;

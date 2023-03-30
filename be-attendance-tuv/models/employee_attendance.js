@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+const moment = require("moment");
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
     "employee_attendance",
@@ -59,6 +60,8 @@ module.exports = function (sequelize, DataTypes) {
       tableName: "employee_attendance",
       underscored: true,
       timestamps: true,
+      createdAt: "created_at",
+      updatedAt: "updated_at",
       indexes: [
         {
           name: "PRIMARY",

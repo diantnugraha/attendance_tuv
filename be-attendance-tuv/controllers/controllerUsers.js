@@ -5,16 +5,14 @@ const models = require("../models/index");
 class Controller {
   static async registerUser(req, res, next) {
     try {
-      let { email, password, IMEI } = req.body;
+      let { email, password } = req.body;
       let addUser = await User.create({
         email,
         password,
-        IMEI,
       });
       let objAddUser = {
         id: addUser.id,
         email: addUser.email,
-        IMEI: addUser.IMEI,
       };
       res.status(201).json(objAddUser);
     } catch (error) {
@@ -24,21 +22,25 @@ class Controller {
   static async loginUser(req, res, next) {
     try {
       let { email, password, user_imei } = req.body;
+      console.log(req.body);
       let findUser = await models.users.findOne({
         where: {
           email: email,
         },
       });
 
-      // if (!findUser.user_imei) {
-      //   let addIMEI = await models.users.create({
-      //     user_imei,
-      //   });
-      //   console.log(addIMEI, "success add imei");
-      // }
-
-      if (findUser.user_imei !== user_imei) {
-        throw { name: "invalid_imei" };
+      if (findUser.user_imei == "" || findUser.user_imei === null) {
+        let addIMEI = await models.users.update(
+          {
+            user_imei: user_imei,
+          },
+          { where: { email: email } }
+        );
+        console.log(addIMEI, "success add imei");
+      } else {
+        if (findUser.user_imei !== user_imei) {
+          throw { name: "invalid_imei" };
+        }
       }
 
       if (!findUser) {
@@ -57,6 +59,7 @@ class Controller {
         IMEI: findUser.user_imei,
       };
 
+      console.log(payload, "ini dari user");
       const access_token = createToken(payload);
       res.status(200).json({ payload, access_token });
     } catch (error) {
@@ -69,6 +72,37 @@ class Controller {
     try {
       let user = await models.users.findAll();
       res.status(200).json(user);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
+  static async getDetailUsers(req, res, next) {
+    let { id } = req.params;
+    try {
+      let detailUser = await models.users.findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      let employee_id = detailUser.employee_id;
+
+      let detailEmployee = await models.employee_list.findOne({
+        where: {
+          employee_id: employee_id,
+        },
+      });
+
+      let jobTitleID = detailEmployee.job_title_id;
+
+      let jobTitle = await models.job_titles.findOne({
+        where: {
+          id: jobTitleID,
+        },
+      });
+      res.status(200).json({ detailEmployee, jobTitle });
     } catch (error) {
       console.log(error);
       next(error);
