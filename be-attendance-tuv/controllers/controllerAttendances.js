@@ -1,11 +1,11 @@
 const date = require("date-and-time");
-
+const moment = require('moment');
 const models = require("../models/index");
 
 class Controller {
   static async userCheckIn(req, res, next) {
     try {
-      let { employee_imei, employee_latitude, employee_longtitude } = req.body;
+      let { employee_imei, employee_latitude, employee_longitude } = req.body;
 
       const now = new Date();
 
@@ -28,7 +28,7 @@ class Controller {
       const attendance_time_in = currentTime;
       const attendance_status = "in";
       const attendance_time_out = "";
-      const employee_longtitude_out = "null";
+      const employee_longitude_out = "null";
       const employee_latitude_out = "null";
 
       let existingCureentAttendance = await models.employee_attendance.findOne({
@@ -50,9 +50,9 @@ class Controller {
           attendance_time_in,
           attendance_time_out,
           employee_latitude,
-          employee_longtitude,
+          employee_longitude,
           employee_latitude_out,
-          employee_longtitude_out,
+          employee_longitude_out,
           user_id,
         });
         res.status(201).json({ message: "Thank you for Check-In !" });
@@ -73,9 +73,9 @@ class Controller {
       //     attendance_time_in,
       //     attendance_time_out,
       //     employee_latitude,
-      //     employee_longtitude,
+      //     employee_longitude,
       //     employee_latitude_out,
-      //     employee_longtitude_out,
+      //     employee_longitude_out,
       //     user_id,
       //   });
       //   res.status(201).json({ message: "Thank you for Check-In !" });
@@ -85,6 +85,22 @@ class Controller {
     } catch (error) {
       console.log(error);
       next(error);
+    }
+  }
+
+  static async logAttendance(req, res, next) {
+    console.log('cek');
+    try {
+      const id = req.user.id
+      let logAttendances = await models.employee_attendance.findAll({
+        where : {
+          user_id : id
+        }
+      })
+      res.status(200).json(logAttendances)
+    } catch (error) {
+      console.log(error);
+      next(error)
     }
   }
 
@@ -101,11 +117,42 @@ class Controller {
         },
       });
 
+      const timeIn = detailCurrentAttendance.attendance_time_in
+
+      const timeOut = detailCurrentAttendance.attendance_time_out
+      
+  
+
+      // const duration = moment.duration(moment().diff(moment(timeIn, 'HH:mm:ss')));
+      // const hours = duration.asHours();
+      // const workHours = hours - 1
+
+      // res.status(200).json(workHours);
+
       if (!detailCurrentAttendance) {
         throw { name: "DATA_NOT_FOUND" };
       }
+      if (!timeOut) {
+        const duration = moment.duration(moment().diff(moment(timeIn, 'HH:mm:ss')));
+        const hours = duration.asHours();
+        const workHours = hours - 1
+        console.log(workHours, 'ini dari current');
+        // res.status(200).json(workHours);
+        }
+
+        if (timeOut) {
+          const duration = moment.duration(moment(timeOut, 'HH:mm:ss').diff(moment(timeIn, 'HH:mm:ss')));
+          const hours = duration.asHours();
+          const workHours = hours - 1
+          console.log(workHours, 'ini dari cekout');
+          // res.status(200).json(workHours);
+          }
+
+
       console.log(detailCurrentAttendance, "ini dari detail");
+
       res.status(200).json(detailCurrentAttendance);
+       
     } catch (error) {
       next(error);
       console.log(error);
@@ -124,7 +171,7 @@ class Controller {
 
       const currentTime = hours + ":" + minutes + ":" + seconds;
 
-      let { employee_latitude_out, employee_longtitude_out } = req.body;
+      let { employee_latitude_out, employee_longitude_out } = req.body;
       let { id } = req.params;
       const user_id = req.user.id;
       const attendance_time_out = currentTime;
@@ -132,7 +179,7 @@ class Controller {
         {
           attendance_time_out,
           employee_latitude_out,
-          employee_longtitude_out,
+          employee_longitude_out,
         },
         {
           where: {

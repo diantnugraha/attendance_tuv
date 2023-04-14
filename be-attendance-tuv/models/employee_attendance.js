@@ -34,7 +34,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.CHAR(100),
         allowNull: false,
       },
-      employee_longtitude: {
+      employee_longitude: {
         type: DataTypes.CHAR(100),
         allowNull: false,
       },
@@ -42,7 +42,7 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.CHAR(100),
         allowNull: false,
       },
-      employee_longtitude_out: {
+      employee_longitude_out: {
         type: DataTypes.CHAR(100),
         allowNull: false,
       },

@@ -42,7 +42,7 @@ function errorHandle(error, request, respone, next) {
       break;
     case "status_check-in":
       code = 400;
-      message = `Employee already check in today. Please check-in tomorow!`;
+      message = `Employee already check in today`;
       break;
     case "invalid_imei":
       code = 401;

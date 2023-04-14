@@ -11,6 +11,7 @@ router.get(
   authenticationUser,
   ControllerAttendance.currentAttendance
 );
+router.get("/logs", authenticationUser, ControllerAttendance.logAttendance)
 router.get("/:id", authenticationUser, ControllerUser.getDetailUsers);
 router.post(
   "/attendance-in",
