@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import HomeScreen from '../screens/Home';
 import LogScreen from '../screens/Log';
 import ProfileScreen from '../screens/Profile';
+import OnboardingScreen from '../screens/OnboardingScreen';
 
 const Tab = createBottomTabNavigator();
 

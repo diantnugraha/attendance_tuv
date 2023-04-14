@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, View, ScrollView} from 'react-native';
+import {Image, StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
 import {Button} from 'react-native-paper';
 import ComponentCurrentDate from '../components/ComponentCurrentDate';
 import GetLocation from 'react-native-get-location';
@@ -11,7 +11,6 @@ import SmallLogo from '../assets/SmallLogo';
 import ComponentLiveTime from '../components/ComponentClock';
 import Icon from 'react-native-vector-icons/Ionicons';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-
 import {detailAttendance} from '../features/detailAttendanceSlice';
 import {fetchDetailUser} from '../features/detailEmployeeSlice';
 import {fetchCurrentLocation} from '../features/locationSlice';
@@ -25,10 +24,10 @@ export default function Home({navigation}) {
   );
 
   const [employee_latitude, setLatitude] = useState('');
-  const [employee_longtitude, setLongitude] = useState('');
+  const [employee_longitude, setLongitude] = useState('');
   const [id_attendance, setDetailAttendance] = useState(null);
   const [employee_latitude_out, setLatitudeOut] = useState('');
-  const [employee_longtitude_out, setLongitudeOut] = useState('');
+  const [employee_longitude_out, setLongitudeOut] = useState('');
   const [employee_imei, setImei] = useState('');
   const [isToggled, setIsToggled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +41,7 @@ export default function Home({navigation}) {
       const uniqueId = await DeviceInfo.syncUniqueId();
       setImei(uniqueId);
     } catch (err) {
+      console.log(err, 'ini dari adrjsdjaas');
       throw err;
     }
   };
@@ -70,7 +70,7 @@ export default function Home({navigation}) {
         attendanceIn({
           employee_imei,
           employee_latitude,
-          employee_longtitude,
+          employee_longitude,
         }),
       );
       if (result.error) {
@@ -101,7 +101,7 @@ export default function Home({navigation}) {
         attendanceOut({
           id_attendance,
           employee_latitude_out,
-          employee_longtitude_out,
+          employee_longitude_out,
         }),
       );
     } catch (error) {
@@ -114,7 +114,7 @@ export default function Home({navigation}) {
   //     dispatch(
   //       fetchCurrentLocation({
   //         employee_latitude,
-  //         employee_longtitude,
+  //         employee_longitude,
   //       }),
   //     );
   //   } catch (error) {
@@ -181,7 +181,7 @@ export default function Home({navigation}) {
 
   return (
     <>
-      <View style={styles.container}>
+     <SafeAreaView style={styles.container}>
         <View style={styles.containerHeader}>
           <SmallLogo style={styles.containerLogo} />
         </View>
@@ -282,14 +282,14 @@ export default function Home({navigation}) {
                   <Text style={styles.textStatus}>8 Hrs</Text>
                   <Text
                     style={{color: '#808080', fontFamily: 'Poppins-Regular'}}>
-                    Working Hr's
+                    Work Hr's
                   </Text>
                 </View>
               </View>
             </View>
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     </>
   );
 }
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   },
 
   textReady: {
-    fontFamily: 'Poppins-Reguler',
+    fontFamily: 'Poppins-Regular',
     color: '#808080',
     fontSize: 14,
   },
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
   textNameRoad: {
     marginLeft: '2%',
     marginRight: '2%',
-    fontFamily: 'Poppins-Reguler',
+    fontFamily: 'Poppins-Regular',
     paddingHorizontal: '2%',
     marginVertical: '5%',
     color: '#808080',

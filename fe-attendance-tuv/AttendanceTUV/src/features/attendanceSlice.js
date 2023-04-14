@@ -5,11 +5,11 @@ import {
 } from '@reduxjs/toolkit';
 import client from '../config/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {ToastAndroid} from 'react-native';
+import {ToastAndroid, Alert, Platform} from 'react-native';
 
 export const attendanceIn = createAsyncThunk(
   'attendance/attendanceIn',
-  async ({employee_imei, employee_latitude, employee_longtitude}) => {
+  async ({employee_imei, employee_latitude, employee_longitude}) => {
     try {
       const token = await AsyncStorage.getItem('access_token');
       const response = await client.post(
@@ -17,20 +17,27 @@ export const attendanceIn = createAsyncThunk(
         {
           employee_imei,
           employee_latitude,
-          employee_longtitude,
+          employee_longitude,
         },
         {
           headers: {access_token: token},
         },
       );
+      if (Platform.OS === 'android') {
       ToastAndroid.show(response.data.message, ToastAndroid.LONG);
-
+      } else {
+        Alert.alert(response.data.message)
+      }
       console.log(response.data, 'ini dari cekin');
       console.log(response, 'ini dari cekin');
 
       return response.data;
     } catch (error) {
+      if (Platform.OS === 'android') {
       ToastAndroid.show(error.response.data.message, ToastAndroid.LONG);
+      } else {
+        Alert.alert(error.response.data.message)
+      }
       console.log(error.response.data, 'ini dari slice');
       throw error.response.data.message;
     }
@@ -39,7 +46,7 @@ export const attendanceIn = createAsyncThunk(
 
 export const attendanceOut = createAsyncThunk(
   'attendance/attendanceOut',
-  async ({id_attendance, employee_latitude_out, employee_longtitude_out}) => {
+  async ({id_attendance, employee_latitude_out, employee_longitude_out}) => {
     try {
       console.log(id_attendance, 'ini dari out');
       const token = await AsyncStorage.getItem('access_token');
@@ -47,17 +54,24 @@ export const attendanceOut = createAsyncThunk(
         `users/attendance-out/${id_attendance}`,
         {
           employee_latitude_out,
-          employee_longtitude_out,
+          employee_longitude_out,
         },
         {
           headers: {access_token: token},
         },
       );
-      ToastAndroid.show(response.data.message, ToastAndroid.LONG);
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(response.data.message, ToastAndroid.LONG);
+        } else {
+          Alert.alert(response.data.message)
+        }
       return response.data;
     } catch (error) {
-      console.log(error);
-      console.log(error, 'ini dari checkin');
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(error.response.data.message, ToastAndroid.LONG);
+        } else {
+          Alert.alert(error.response.data.message)
+        }
       throw error.response.data;
     }
   },

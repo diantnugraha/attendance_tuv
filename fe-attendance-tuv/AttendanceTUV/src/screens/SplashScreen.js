@@ -13,7 +13,7 @@ export default function SplashScreen({navigation}) {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{name: access_token ? 'App' : 'Auth'}],
+              routes: [{name: access_token ? 'App' : 'OnboardingScreen'}],
             }),
           );
         } catch (e) {

@@ -7,7 +7,7 @@
 import {Provider as PaperProvider} from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import {StyleSheet, Text, SafeAreaView, Image, View} from 'react-native';
+import {StyleSheet, Text, SafeAreaView, Image, View, SafeAreaViewBase} from 'react-native';
 import {Provider} from 'react-redux';
 import StackNavigator from './src/navigator/StackNavigator';
 import {store} from './src/stores/store';

@@ -40,10 +40,10 @@ export default ComponentLiveTime;
 
 const stylesheet = StyleSheet.create({
   textClock: {
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: 'Poppins-Bold',
     color: '#3B3B3B',
     fontSize: 55,
-    marginBottom: '-5%',
+    marginBottom: '-2%',
     marginTop: '5%',
   },
   textSecond: {

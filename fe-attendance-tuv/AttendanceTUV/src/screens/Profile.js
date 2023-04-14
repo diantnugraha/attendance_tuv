@@ -1,4 +1,4 @@
-import {Image, StyleSheet, Text, View, ScrollView} from 'react-native';
+import {Image, StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
 import {Button, ActivityIndicator} from 'react-native-paper';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -34,7 +34,7 @@ export default function ProfileScreen({navigation}) {
 
   return (
     <>
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.containerHeader}>
           <SmallLogo style={styles.containerLogo} />
         </View>
@@ -91,7 +91,7 @@ export default function ProfileScreen({navigation}) {
             />
           </View>
         </ScrollView>
-      </View>
+      </SafeAreaView>
     </>
   );
 }
@@ -192,14 +192,13 @@ const styles = StyleSheet.create({
     width: 150,
   },
   containerProfileDetail: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFF',
     borderRadius: 10,
     padding: 16,
     marginHorizontal: '5%',
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: '2%',
-    elevation: 2,
   },
   containerLogo: {
     marginTop: '2%',

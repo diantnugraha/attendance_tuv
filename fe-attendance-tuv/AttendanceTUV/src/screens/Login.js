@@ -18,11 +18,15 @@ export default function Login({navigation}) {
   const [user_imei, setImei] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
+  console.log(email, 'ini email');
+  console.log(password, 'ini passss');
+
   const getUserUniqueId = async () => {
     try {
       const uniqueId = await DeviceInfo.syncUniqueId();
       setImei(uniqueId);
     } catch (err) {
+      console.log(err, 'ini dari eeeerrrrr');
       throw err;
     }
   };
@@ -37,12 +41,12 @@ export default function Login({navigation}) {
   const handleLogin = async () => {
     try {
       const res = await dispatch(login({email, password, user_imei}));
+      console.log('sampai dsini');
       if (res?.payload?.access_token) {
         const access_token = res?.payload?.access_token;
         const id = String(res?.payload?.payload?.id);
         await AsyncStorage.setItem('access_token', access_token);
         await AsyncStorage.setItem('id', id);
-
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
     alignContent: 'flex-end',
   },
   textSignIn: {
-    fontFamily: 'Oswald-Light',
+    fontFamily: 'Poppins-SemiBold',
     fontSize: 30,
     paddingLeft: '8%',
     paddingTop: '15%',
@@ -147,6 +151,7 @@ const styles = StyleSheet.create({
     paddingLeft: '8%',
     paddingTop: '1%',
     color: 'black',
+    fontFamily: 'Poppins-Regular',
   },
   textFieldEmail: {
     fontSize: 16,
@@ -163,6 +168,5 @@ const styles = StyleSheet.create({
     paddingTop: '5%',
     paddingBottom: '2%',
     color: 'black',
-    fontWeight: 'bold',
   },
 });

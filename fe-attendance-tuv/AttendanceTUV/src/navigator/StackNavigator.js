@@ -7,10 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigatorContainer} from '@react-navigation/native';
 import {StatusBar} from 'react-native';
 import BottomNavigator from './BottomNavigator';
+import OnboardingScreen from '../screens/OnboardingScreen';
 
 const Stack = createNativeStackNavigator();
 
 export default function StackNavigator() {
+
   const AuthStack = () => {
     return (
       <Stack.Navigator>
@@ -42,6 +44,11 @@ export default function StackNavigator() {
         <Stack.Screen
           name="SplashScreen"
           component={SplashScreen}
+          options={{headerShown: false, headerBackTitleVisible: false}}
+        />
+         <Stack.Screen
+          name="OnboardingScreen"
+          component={OnboardingScreen}
           options={{headerShown: false, headerBackTitleVisible: false}}
         />
         <Stack.Screen
