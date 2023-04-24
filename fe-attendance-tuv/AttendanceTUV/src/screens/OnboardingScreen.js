@@ -1,6 +1,6 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {View, Text, StyleSheet, StatusBar, Image} from 'react-native';
-
 import AppIntroSlider from 'react-native-app-intro-slider';
 
 
@@ -23,6 +23,8 @@ const data = [
 ];
 
 const OnboardingScreen = (props) => {
+  const navigation = useNavigation()
+
   const renderItem = ({item}) => {
     return (
       <View style={styles.slide}>
@@ -62,7 +64,7 @@ const OnboardingScreen = (props) => {
   };
 
   const handleDone = () => {
-    props.handleDone();
+    navigation.navigate('Auth')
   };
 
   return (

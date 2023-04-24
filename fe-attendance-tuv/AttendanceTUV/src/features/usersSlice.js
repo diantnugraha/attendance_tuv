@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import client from '../config/axios';
-import {ToastAndroid} from 'react-native';
+import {ToastAndroid, Alert} from 'react-native';
 
 export const login = createAsyncThunk(
   'auth/login',
@@ -15,10 +15,16 @@ export const login = createAsyncThunk(
       console.log(user_imei, 'ini dari respone');
       return response.data;
     } catch (error) {
-      console.log(error, 'ini dari eee');
-      ToastAndroid.show(error.response.data.message, ToastAndroid.LONG);
-      console.log(error.response.data.message, 'ini dari catch');
-      throw error.response.data;
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(error.response.data.message, ToastAndroid.LONG);
+        } else {
+          Alert.alert(error.response.data.message)
+        }
+        throw error.response.data.message;
+      // console.log(error, 'ini dari eee');
+      // ToastAndroid.show(error.response.data.message, ToastAndroid.LONG);
+      // console.log(error.response.data.message, 'ini dari catch');
+      // throw error.response.data;
     }
   },
 );

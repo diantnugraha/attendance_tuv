@@ -1,4 +1,11 @@
-import {Image, StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
 import {Button} from 'react-native-paper';
 import ComponentCurrentDate from '../components/ComponentCurrentDate';
 import GetLocation from 'react-native-get-location';
@@ -23,6 +30,9 @@ export default function Home({navigation}) {
     state => state.detailAttendance.data,
   );
 
+  console.log(detailUserAttendanceData, 'ini dari detail yang baru');
+
+  console.log(detailUserAttendanceData, 'ini dari user baru');
   const [employee_latitude, setLatitude] = useState('');
   const [employee_longitude, setLongitude] = useState('');
   const [id_attendance, setDetailAttendance] = useState(null);
@@ -109,21 +119,6 @@ export default function Home({navigation}) {
     }
   };
 
-  // const getNamedRoad = async () => {
-  //   try {
-  //     dispatch(
-  //       fetchCurrentLocation({
-  //         employee_latitude,
-  //         employee_longitude,
-  //       }),
-  //     );
-  //   } catch (error) {
-  //     console.log(error);
-  //     const {code, message} = error;
-  //     console.warn(code, message);
-  //   }
-  // };
-
   useEffect(() => {
     dispatch(fetchCurrentLocation(location));
   }, [location]);
@@ -181,7 +176,7 @@ export default function Home({navigation}) {
 
   return (
     <>
-     <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.containerHeader}>
           <SmallLogo style={styles.containerLogo} />
         </View>
@@ -257,7 +252,7 @@ export default function Home({navigation}) {
                 </Text>
               </View>
               <View style={styles.containerAttendanceContent}>
-                <View style={styles.containerStatus}>
+                {/* <View style={styles.containerStatus}>
                   <Icon name="time" size={40} color="#001ED2" />
                   <Text style={styles.textStatus}>
                     {detailUserAttendanceData?.attendance_time_in.slice(0, 5)}
@@ -266,8 +261,40 @@ export default function Home({navigation}) {
                     style={{color: '#808080', fontFamily: 'Poppins-Regular'}}>
                     Clock In
                   </Text>
-                </View>
+                </View> */}
                 <View style={styles.containerStatus}>
+                  <Icon name="time" size={40} color="#001ED2" />
+                  {detailUserAttendanceData?.attendance_time_in ? (
+                    <>
+                      <Text style={styles.textStatus}>
+                        {detailUserAttendanceData.attendance_time_in.slice(
+                          0,
+                          5,
+                        )}
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#808080',
+                          fontFamily: 'Poppins-Regular',
+                        }}>
+                        Clock In
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.textStatus}>.. : ..</Text>
+                      <Text
+                        style={{
+                          color: '#808080',
+                          fontFamily: 'Poppins-Regular',
+                        }}>
+                        Clock In
+                      </Text>
+                    </>
+                  )}
+                </View>
+
+                {/* <View style={styles.containerStatus}>
                   <Icon name="timer" size={40} color="#001ED2" />
                   <Text style={styles.textStatus}>
                     {detailUserAttendanceData?.attendance_time_out.slice(0, 5)}
@@ -276,14 +303,75 @@ export default function Home({navigation}) {
                     style={{color: '#808080', fontFamily: 'Poppins-Regular'}}>
                     Clock Out
                   </Text>
-                </View>
+                </View> */}
                 <View style={styles.containerStatus}>
-                  <Icon name="hourglass" size={40} color="#001ED2" />
-                  <Text style={styles.textStatus}>8 Hrs</Text>
+                  <Icon name="time" size={40} color="#001ED2" />
+                  {detailUserAttendanceData?.attendance_time_out ? (
+                    <>
+                      <Text style={styles.textStatus}>
+                        {detailUserAttendanceData.attendance_time_out.slice(
+                          0,
+                          5,
+                        )}
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#808080',
+                          fontFamily: 'Poppins-Regular',
+                        }}>
+                        Clock In
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.textStatus}>.. : ..</Text>
+                      <Text
+                        style={{
+                          color: '#808080',
+                          fontFamily: 'Poppins-Regular',
+                        }}>
+                        Clock In
+                      </Text>
+                    </>
+                  )}
+                </View>
+                {/* <View style={styles.containerStatus}>
+                  <Icon name="stopwatch" size={40} color="#001ED2" />
+                  <Text style={styles.textStatus}>
+                    {detailUserAttendanceData?.total_hours} Hrs
+                  </Text>
                   <Text
                     style={{color: '#808080', fontFamily: 'Poppins-Regular'}}>
                     Work Hr's
                   </Text>
+                </View> */}
+                <View style={styles.containerStatus}>
+                  <Icon name="time" size={40} color="#001ED2" />
+                  {detailUserAttendanceData?.total_hours ? (
+                    <>
+                      <Text style={styles.textStatus}>
+                        {detailUserAttendanceData.total_hours} Hrs
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#808080',
+                          fontFamily: 'Poppins-Regular',
+                        }}>
+                        Clock In
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.textStatus}>Hrs</Text>
+                      <Text
+                        style={{
+                          color: '#808080',
+                          fontFamily: 'Poppins-Regular',
+                        }}>
+                        Work Hr's
+                      </Text>
+                    </>
+                  )}
                 </View>
               </View>
             </View>

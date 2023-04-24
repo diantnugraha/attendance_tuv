@@ -41,7 +41,6 @@ export default function Login({navigation}) {
   const handleLogin = async () => {
     try {
       const res = await dispatch(login({email, password, user_imei}));
-      console.log('sampai dsini');
       if (res?.payload?.access_token) {
         const access_token = res?.payload?.access_token;
         const id = String(res?.payload?.payload?.id);
@@ -54,7 +53,8 @@ export default function Login({navigation}) {
           }),
         );
       } else {
-        throw res.error;
+        // throw res.error;
+        console.log(res.error);
       }
     } catch (err) {
       throw err;

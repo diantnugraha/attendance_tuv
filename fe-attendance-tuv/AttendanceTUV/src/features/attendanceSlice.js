@@ -28,9 +28,6 @@ export const attendanceIn = createAsyncThunk(
       } else {
         Alert.alert(response.data.message)
       }
-      console.log(response.data, 'ini dari cekin');
-      console.log(response, 'ini dari cekin');
-
       return response.data;
     } catch (error) {
       if (Platform.OS === 'android') {
@@ -38,7 +35,6 @@ export const attendanceIn = createAsyncThunk(
       } else {
         Alert.alert(error.response.data.message)
       }
-      console.log(error.response.data, 'ini dari slice');
       throw error.response.data.message;
     }
   },
@@ -60,6 +56,8 @@ export const attendanceOut = createAsyncThunk(
           headers: {access_token: token},
         },
       );
+
+      console.log(response, 'ini dari OUT');
       if (Platform.OS === 'android') {
         ToastAndroid.show(response.data.message, ToastAndroid.LONG);
         } else {
