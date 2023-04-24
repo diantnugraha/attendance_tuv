@@ -1,6 +1,7 @@
 const date = require("date-and-time");
-const moment = require('moment');
+const moment = require("moment");
 const models = require("../models/index");
+const { Op } = require("sequelize");
 
 class Controller {
   static async userCheckIn(req, res, next) {
@@ -18,7 +19,6 @@ class Controller {
       seconds = seconds < 10 ? "0" + seconds : seconds;
       const currentTime = hours + ":" + minutes + ":" + seconds;
 
-      console.log(currentTime, "ini dari IIIIIIIIINNNNn");
 
       const formatDate = date.format(now, "YYYY-MM-DD");
 
@@ -28,6 +28,7 @@ class Controller {
       const attendance_time_in = currentTime;
       const attendance_status = "in";
       const attendance_time_out = "";
+      const total_hours = ""
       const employee_longitude_out = "null";
       const employee_latitude_out = "null";
 
@@ -49,6 +50,7 @@ class Controller {
           attendance_status,
           attendance_time_in,
           attendance_time_out,
+          total_hours,
           employee_latitude,
           employee_longitude,
           employee_latitude_out,
@@ -83,97 +85,75 @@ class Controller {
       //   throw { name: "status_check-in" };
       // }
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
 
-  static async logAttendance(req, res, next) {
-    console.log('cek');
-    try {
-      const id = req.user.id
-      let logAttendances = await models.employee_attendance.findAll({
-        where : {
-          user_id : id
-        }
-      })
-      res.status(200).json(logAttendances)
-    } catch (error) {
-      console.log(error);
-      next(error)
-    }
-  }
+  // static async userCheckOut(req, res, next) {
+  //   try {
+  //     const currentDate = new Date();
+  //     let hours = currentDate.getHours();
+  //     let minutes = currentDate.getMinutes();
+  //     let seconds = currentDate.getSeconds();
 
-  static async currentAttendance(req, res, next) {
-    try {
-      const now = new Date();
-      const currentDate = date.format(now, "YYYY-MM-DD");
-      const id = req.user.id;
-      console.log(id, "ini dari current");
-      let detailCurrentAttendance = await models.employee_attendance.findOne({
-        where: {
-          attendance_date: currentDate,
-          user_id: id,
-        },
-      });
+  //     hours = hours < 10 ? "0" + hours : hours;
+  //     minutes = minutes < 10 ? "0" + minutes : minutes;
+  //     seconds = seconds < 10 ? "0" + seconds : seconds;
 
-      const timeIn = detailCurrentAttendance.attendance_time_in
+  //     const currentTime = hours + ":" + minutes + ":" + seconds;
 
-      const timeOut = detailCurrentAttendance.attendance_time_out
-      
-  
+  //     let { employee_latitude_out, employee_longitude_out } = req.body;
+  //     let { id } = req.params;
+  //     const user_id = req.user.id;
+  //     const attendance_time_out = currentTime;
+  //     let updateTime = await models.employee_attendance.update(
+  //       {
+  //         attendance_time_out,
+  //         employee_latitude_out,
+  //         employee_longitude_out,
+  //       },
+  //       {
+  //         where: {
+  //           id: id,
+  //           user_id: user_id,
+  //         },
+  //       }
+  //     );
+  //     res.status(200).json({ message: "Thank you for Check-Out !" });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 
-      // const duration = moment.duration(moment().diff(moment(timeIn, 'HH:mm:ss')));
-      // const hours = duration.asHours();
-      // const workHours = hours - 1
-
-      // res.status(200).json(workHours);
-
-      if (!detailCurrentAttendance) {
-        throw { name: "DATA_NOT_FOUND" };
-      }
-      if (!timeOut) {
-        const duration = moment.duration(moment().diff(moment(timeIn, 'HH:mm:ss')));
-        const hours = duration.asHours();
-        const workHours = hours - 1
-        console.log(workHours, 'ini dari current');
-        // res.status(200).json(workHours);
-        }
-
-        if (timeOut) {
-          const duration = moment.duration(moment(timeOut, 'HH:mm:ss').diff(moment(timeIn, 'HH:mm:ss')));
-          const hours = duration.asHours();
-          const workHours = hours - 1
-          console.log(workHours, 'ini dari cekout');
-          // res.status(200).json(workHours);
-          }
-
-
-      console.log(detailCurrentAttendance, "ini dari detail");
-
-      res.status(200).json(detailCurrentAttendance);
-       
-    } catch (error) {
-      next(error);
-      console.log(error);
-    }
-  }
   static async userCheckOut(req, res, next) {
     try {
       const currentDate = new Date();
+      const dateNow = date.format(currentDate, "YYYY-MM-DD");
+
       let hours = currentDate.getHours();
       let minutes = currentDate.getMinutes();
       let seconds = currentDate.getSeconds();
-
+  
       hours = hours < 10 ? "0" + hours : hours;
       minutes = minutes < 10 ? "0" + minutes : minutes;
       seconds = seconds < 10 ? "0" + seconds : seconds;
-
+  
       const currentTime = hours + ":" + minutes + ":" + seconds;
-
+  
+  
       let { employee_latitude_out, employee_longitude_out } = req.body;
       let { id } = req.params;
       const user_id = req.user.id;
+  
+      // Check if user has checked in
+      const checkInRecord = await models.employee_attendance.findOne({
+        where: {
+          user_id : user_id,
+          attendance_date: dateNow,
+        }
+      });
+
+  
       const attendance_time_out = currentTime;
       let updateTime = await models.employee_attendance.update(
         {
@@ -188,12 +168,106 @@ class Controller {
           },
         }
       );
-      res.status(200).json({ message: "Thank you for Check-Out !" });
+
+
+      const duration = moment.duration(
+        moment(attendance_time_out, "HH:mm:ss").diff(moment(checkInRecord.attendance_time_in, "HH:mm:ss"))
+      );
+      const totalHours = duration.asHours().toFixed(2);
+
+      const total_hours = totalHours
+
+      let totalHoursWork = await models.employee_attendance.update(
+        {
+          total_hours
+        },
+        {
+          where: {
+            id: id,
+            user_id: user_id,
+          },
+        }
+      )
+      res.status(200).json({ message: "Thank you for Check-Out !"});
     } catch (error) {
       next(error);
-      console.log(error);
     }
   }
+  
+  static async logAttendance(req, res, next) {
+    try {
+      const id = req.user.id;
+      let logAttendances = await models.employee_attendance.findAll({
+        where: {
+          user_id: id,
+        },
+      });
+      res.status(200).json(logAttendances);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async currentAttendance(req, res, next) {
+    try {
+      const now = new Date();
+      const currentDate = date.format(now, "YYYY-MM-DD");
+      const id = req.user.id;
+      let detailCurrentAttendance = await models.employee_attendance.findOne({
+        where: {
+          attendance_date: currentDate,
+          user_id: id,
+        },
+      });
+
+      const timeIn = detailCurrentAttendance.attendance_time_in;
+
+      const timeOut = detailCurrentAttendance.attendance_time_out;
+
+      if (!detailCurrentAttendance) {
+        throw { name: "DATA_NOT_FOUND" };
+      }
+
+      res.status(200).json(detailCurrentAttendance);
+    } catch (error) {
+      next(error);
+    }
+  }
+  // static async userCheckOut(req, res, next) {
+  //   try {
+  //     const currentDate = new Date();
+  //     let hours = currentDate.getHours();
+  //     let minutes = currentDate.getMinutes();
+  //     let seconds = currentDate.getSeconds();
+
+  //     hours = hours < 10 ? "0" + hours : hours;
+  //     minutes = minutes < 10 ? "0" + minutes : minutes;
+  //     seconds = seconds < 10 ? "0" + seconds : seconds;
+
+  //     const currentTime = hours + ":" + minutes + ":" + seconds;
+
+  //     let { employee_latitude_out, employee_longitude_out } = req.body;
+  //     let { id } = req.params;
+  //     const user_id = req.user.id;
+  //     const attendance_time_out = currentTime;
+  //     let updateTime = await models.employee_attendance.update(
+  //       {
+  //         attendance_time_out,
+  //         employee_latitude_out,
+  //         employee_longitude_out,
+  //       },
+  //       {
+  //         where: {
+  //           id: id,
+  //           user_id: user_id,
+  //         },
+  //       }
+  //     );
+  //     res.status(200).json({ message: "Thank you for Check-Out !" });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 }
 
 module.exports = Controller;

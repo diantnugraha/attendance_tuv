@@ -29,6 +29,12 @@ class Controller {
         },
       });
 
+      if (!findUser) {
+        console.log('ini dari error find');
+        throw { name: "invalid_credentials" };
+      }
+
+
       if (findUser.user_imei == "" || findUser.user_imei === null) {
         let addIMEI = await models.users.update(
           {
@@ -43,9 +49,9 @@ class Controller {
         }
       }
 
-      if (!findUser) {
-        throw { name: "invalid_credentials" };
-      }
+      // if (!findUser) {
+      //   throw { name: "invalid_credentials" };
+      // }
 
       const comparedPassword = comparePassword(password, findUser.password);
 

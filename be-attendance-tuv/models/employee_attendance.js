@@ -30,6 +30,10 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.CHAR(100),
         allowNull: false,
       },
+      total_hours: {
+        type: DataTypes.CHAR(50),
+        allowNull: false,
+      },
       employee_latitude: {
         type: DataTypes.CHAR(100),
         allowNull: false,
