@@ -6,6 +6,7 @@ import HomeScreen from '../screens/Home';
 import LogScreen from '../screens/Log';
 import ProfileScreen from '../screens/Profile';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import LeaveScreen from '../screens/Leave';
 
 const Tab = createBottomTabNavigator();
 
@@ -32,6 +33,16 @@ export default function BottomNavigator() {
           headerShown: false,
           tabBarIcon: ({color}) => (
             <Icon name="receipt" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Leaves"
+        component={LeaveScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({color}) => (
+            <Icon name="reader" color={color} size={26} />
           ),
         }}
       />

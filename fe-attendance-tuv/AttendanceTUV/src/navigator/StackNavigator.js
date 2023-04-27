@@ -61,23 +61,7 @@ export default function StackNavigator() {
     }, 2500);
   }, []);
 
-  // useEffect(() => {
-  //   const bootstrapAsync = async () => {
-  //     try {
-  //       const access_token = await AsyncStorage.getItem('access_token');
-  //       setTimeout(() => {
-  //         navigation.reset({
-  //           index: 0,
-            // routes: [{ name: access_token ? 'App' : 'OnboardingScreen' }],
-  //         });
-  //       }, 2000);
-  //     } catch (e) {
-  //       console.error(e);
-  //     }
-  //   };
 
-  //   bootstrapAsync();
-  // }, []);
 
   return (
     <>

@@ -109,7 +109,8 @@ const styles = StyleSheet.create({
   },
   containerHeader: {
     backgroundColor: '#001ED2',
-    height: '10%',
+    height: '8%',
+    alignItems: 'center'
   },
   containerImage: {
     alignItems: 'center',
@@ -120,46 +121,6 @@ const styles = StyleSheet.create({
     padding: '5%',
   },
 
-  textWelcome: {
-    fontFamily: 'Poppins-SemiBold',
-    color: 'black',
-    marginVertical: '1%',
-
-    fontSize: 20,
-  },
-
-  containerContentClock: {
-    backgroundColor: 'white',
-    marginHorizontal: '5%',
-    paddingVertical: '5%',
-    alignItems: 'center',
-    // borderRadius: 20,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-
-    // elevation: 5,
-  },
-  containerAttendanceContent: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // borderRadius: 20,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-
-    // elevation: 5,
-  },
   containerAccount: {
     backgroundColor: 'white',
     marginHorizontal: '5%',
@@ -202,7 +163,6 @@ const styles = StyleSheet.create({
   },
   containerLogo: {
     marginTop: '2%',
-    marginLeft: '5%',
   },
   styleImage: {
     height: 120,
@@ -223,28 +183,6 @@ const styles = StyleSheet.create({
   containerLogout: {
     marginVertical: '10%',
     alignItems: 'center',
-  },
-  containerDetail: {
-    flexDirection: 'row',
-    borderRadius: 5,
-    backgroundColor: '#C4C4C4',
-    height: '40%',
-    alignItems: 'center',
-  },
-  textStatus: {
-    marginTop: '2%',
-    fontSize: 18,
-    color: '#000000',
-    fontFamily: 'Poppins-SemiBold',
-  },
-  textNameRoad: {
-    marginLeft: '2%',
-    marginRight: '2%',
-    fontFamily: 'Poppins-Reguler',
-    paddingHorizontal: '2%',
-    marginVertical: '5%',
-    color: '#808080',
-    fontSize: 14,
   },
   textCompany: {
     fontSize: 14,

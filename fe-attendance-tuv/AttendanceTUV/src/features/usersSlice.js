@@ -11,8 +11,6 @@ export const login = createAsyncThunk(
         password,
         user_imei,
       });
-      console.log(response, 'ini dari res');
-      console.log(user_imei, 'ini dari respone');
       return response.data;
     } catch (error) {
       if (Platform.OS === 'android') {
@@ -21,10 +19,6 @@ export const login = createAsyncThunk(
           Alert.alert(error.response.data.message)
         }
         throw error.response.data.message;
-      // console.log(error, 'ini dari eee');
-      // ToastAndroid.show(error.response.data.message, ToastAndroid.LONG);
-      // console.log(error.response.data.message, 'ini dari catch');
-      // throw error.response.data;
     }
   },
 );

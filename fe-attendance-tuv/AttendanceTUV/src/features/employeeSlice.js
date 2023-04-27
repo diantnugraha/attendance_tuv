@@ -6,7 +6,6 @@ export const fetchEmployee = createAsyncThunk(
   'user/fetchEmployee',
   async () => {
     const respone = await client.get('/users/all');
-    console.log(respone.data);
     return respone.data;
   },
 );
@@ -21,7 +20,6 @@ export const fetchEmployee = createAsyncThunk(
 //     const respone = await client.get(`/users/${id}`, {
 //       headers: {access_token: token},
 //     });
-//     console.log(respone.data, 'ssssssssssssssssssss');
 //     return respone.data;
 //   },
 // );
@@ -33,7 +31,6 @@ export const fetchEmployee = createAsyncThunk(
 //     const respone = await client.get(`/users/attendance`, {
 //       headers: {access_token: token},
 //     });
-//     console.log(respone.data, 'detail attendance');
 //     return respone.data;
 //   },
 // );

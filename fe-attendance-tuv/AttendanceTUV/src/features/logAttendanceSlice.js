@@ -10,8 +10,6 @@ export const fetchLogAttendance = createAsyncThunk(
     const respone = await client.get('/users/logs', {
         headers: {access_token: token},
     });
-    console.log('cek');
-    console.log(respone.data, 'ini dari log');
     return respone.data;
   },
 );

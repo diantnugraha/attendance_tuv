@@ -7,7 +7,6 @@ export const fetchCurrentLocation = createAsyncThunk(
     const respone = await axios.get(
       `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
     );
-    console.log(respone.data, 'ini dari roaaaaad');
     return respone.data;
   },
 );

@@ -44,7 +44,6 @@ export const attendanceOut = createAsyncThunk(
   'attendance/attendanceOut',
   async ({id_attendance, employee_latitude_out, employee_longitude_out}) => {
     try {
-      console.log(id_attendance, 'ini dari out');
       const token = await AsyncStorage.getItem('access_token');
       const response = await client.patch(
         `users/attendance-out/${id_attendance}`,
@@ -57,7 +56,6 @@ export const attendanceOut = createAsyncThunk(
         },
       );
 
-      console.log(response, 'ini dari OUT');
       if (Platform.OS === 'android') {
         ToastAndroid.show(response.data.message, ToastAndroid.LONG);
         } else {

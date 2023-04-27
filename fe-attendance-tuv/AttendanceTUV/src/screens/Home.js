@@ -5,6 +5,7 @@ import {
   View,
   ScrollView,
   SafeAreaView,
+  RefreshControl
 } from 'react-native';
 import {Button} from 'react-native-paper';
 import ComponentCurrentDate from '../components/ComponentCurrentDate';
@@ -17,7 +18,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import SmallLogo from '../assets/SmallLogo';
 import ComponentLiveTime from '../components/ComponentClock';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {detailAttendance} from '../features/detailAttendanceSlice';
 import {fetchDetailUser} from '../features/detailEmployeeSlice';
 import {fetchCurrentLocation} from '../features/locationSlice';
@@ -30,20 +30,17 @@ export default function Home({navigation}) {
     state => state.detailAttendance.data,
   );
 
-  console.log(detailUserAttendanceData, 'ini dari detail yang baru');
 
-  console.log(detailUserAttendanceData, 'ini dari user baru');
   const [employee_latitude, setLatitude] = useState('');
   const [employee_longitude, setLongitude] = useState('');
   const [id_attendance, setDetailAttendance] = useState(null);
   const [employee_latitude_out, setLatitudeOut] = useState('');
   const [employee_longitude_out, setLongitudeOut] = useState('');
   const [employee_imei, setImei] = useState('');
-  const [isToggled, setIsToggled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState('');
-  const [isLogoutDialogVisible, setLogoutDialogVisible] = useState(false);
   const [location, setLocation] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getRoad = useSelector(state => state.locationUser.data);
   const getDeviceNumber = async () => {
@@ -51,7 +48,6 @@ export default function Home({navigation}) {
       const uniqueId = await DeviceInfo.syncUniqueId();
       setImei(uniqueId);
     } catch (err) {
-      console.log(err, 'ini dari adrjsdjaas');
       throw err;
     }
   };
@@ -119,6 +115,21 @@ export default function Home({navigation}) {
     }
   };
 
+  const fetchData = () =>{
+    getDeviceNumber();
+    getCurrentLocation();
+    getStatus();
+    dispatch(fetchDetailUser());
+    dispatch(detailAttendance());
+    dispatch(fetchCurrentLocation(location));
+  }
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+    setRefreshing(false);
+  };
+
   useEffect(() => {
     dispatch(fetchCurrentLocation(location));
   }, [location]);
@@ -130,6 +141,8 @@ export default function Home({navigation}) {
     dispatch(fetchDetailUser());
     dispatch(detailAttendance());
   }, [dispatch]);
+
+
 
   const getStatus = async () => {
     setIsLoading(true);
@@ -198,7 +211,10 @@ export default function Home({navigation}) {
         </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={styles.containerAllContents}>
+          style={styles.containerAllContents}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           <View
             style={{
               marginHorizontal: '5%',
@@ -293,19 +309,8 @@ export default function Home({navigation}) {
                     </>
                   )}
                 </View>
-
-                {/* <View style={styles.containerStatus}>
-                  <Icon name="timer" size={40} color="#001ED2" />
-                  <Text style={styles.textStatus}>
-                    {detailUserAttendanceData?.attendance_time_out.slice(0, 5)}
-                  </Text>
-                  <Text
-                    style={{color: '#808080', fontFamily: 'Poppins-Regular'}}>
-                    Clock Out
-                  </Text>
-                </View> */}
                 <View style={styles.containerStatus}>
-                  <Icon name="time" size={40} color="#001ED2" />
+                  <Icon name="timer" size={40} color="#001ED2" />
                   {detailUserAttendanceData?.attendance_time_out ? (
                     <>
                       <Text style={styles.textStatus}>
@@ -319,7 +324,7 @@ export default function Home({navigation}) {
                           color: '#808080',
                           fontFamily: 'Poppins-Regular',
                         }}>
-                        Clock In
+                        Clock Out
                       </Text>
                     </>
                   ) : (
@@ -330,23 +335,13 @@ export default function Home({navigation}) {
                           color: '#808080',
                           fontFamily: 'Poppins-Regular',
                         }}>
-                        Clock In
+                        Clock Out
                       </Text>
                     </>
                   )}
                 </View>
-                {/* <View style={styles.containerStatus}>
-                  <Icon name="stopwatch" size={40} color="#001ED2" />
-                  <Text style={styles.textStatus}>
-                    {detailUserAttendanceData?.total_hours} Hrs
-                  </Text>
-                  <Text
-                    style={{color: '#808080', fontFamily: 'Poppins-Regular'}}>
-                    Work Hr's
-                  </Text>
-                </View> */}
                 <View style={styles.containerStatus}>
-                  <Icon name="time" size={40} color="#001ED2" />
+                  <Icon name="stopwatch" size={40} color="#001ED2" />
                   {detailUserAttendanceData?.total_hours ? (
                     <>
                       <Text style={styles.textStatus}>
@@ -357,7 +352,7 @@ export default function Home({navigation}) {
                           color: '#808080',
                           fontFamily: 'Poppins-Regular',
                         }}>
-                        Clock In
+                        Work Hr's
                       </Text>
                     </>
                   ) : (
@@ -396,6 +391,7 @@ const styles = StyleSheet.create({
   containerHeader: {
     backgroundColor: '#001ED2',
     height: '10%',
+    alignItems: 'center'
   },
   containerImage: {
     alignItems: 'center',
@@ -420,39 +416,19 @@ const styles = StyleSheet.create({
   },
 
   containerContentClock: {
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
     marginHorizontal: '5%',
     paddingVertical: '5%',
     alignItems: 'center',
-    // borderRadius: 20,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-
-    // elevation: 5,
   },
   containerAttendanceContent: {
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    // borderRadius: 20,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 3.84,
-
-    // elevation: 5,
   },
   containerAccount: {
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
     marginHorizontal: '5%',
     marginVertical: '5%',
     paddingVertical: '1%',
@@ -475,7 +451,7 @@ const styles = StyleSheet.create({
   },
   containerProfile: {
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -500,7 +476,6 @@ const styles = StyleSheet.create({
   },
   containerLogo: {
     marginTop: '2%',
-    marginLeft: '5%',
   },
   styleImage: {
     height: 55,
@@ -548,7 +523,7 @@ const styles = StyleSheet.create({
   textCompany: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#FFFFFF',
   },
   button: {
     borderRadius: 40,

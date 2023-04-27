@@ -9,7 +9,6 @@ export const detailAttendance = createAsyncThunk(
     const respone = await client.get(`/users/attendance`, {
       headers: {access_token: token},
     });
-    console.log(respone.data);
     return respone.data;
   },
 );

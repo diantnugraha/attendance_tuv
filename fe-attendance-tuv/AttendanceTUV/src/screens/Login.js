@@ -18,15 +18,12 @@ export default function Login({navigation}) {
   const [user_imei, setImei] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
-  console.log(email, 'ini email');
-  console.log(password, 'ini passss');
 
   const getUserUniqueId = async () => {
     try {
       const uniqueId = await DeviceInfo.syncUniqueId();
       setImei(uniqueId);
     } catch (err) {
-      console.log(err, 'ini dari eeeerrrrr');
       throw err;
     }
   };
@@ -53,7 +50,6 @@ export default function Login({navigation}) {
           }),
         );
       } else {
-        // throw res.error;
         console.log(res.error);
       }
     } catch (err) {
@@ -117,6 +113,11 @@ export default function Login({navigation}) {
                 Sign In
               </Button>
             </View>
+            <View style={{alignItems:'center', justifyContent:'center'}}>
+             <Text style={{fontFamily:'Poppins-Regular'}}>
+              Login using your HRIS account
+             </Text>
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -154,15 +155,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
   },
   textFieldEmail: {
+    fontFamily: 'Poppins-SemiBold',
     fontSize: 16,
     paddingLeft: '8%',
     paddingTop: '15%',
     paddingBottom: '2%',
     color: 'black',
-    fontWeight: 'bold',
   },
   textFieldPassword: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-SemiBold',
     fontSize: 16,
     paddingLeft: '8%',
     paddingTop: '5%',
