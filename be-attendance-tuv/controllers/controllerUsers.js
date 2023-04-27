@@ -22,7 +22,6 @@ class Controller {
   static async loginUser(req, res, next) {
     try {
       let { email, password, user_imei } = req.body;
-      console.log(req.body);
       let findUser = await models.users.findOne({
         where: {
           email: email,
@@ -30,7 +29,6 @@ class Controller {
       });
 
       if (!findUser) {
-        console.log('ini dari error find');
         throw { name: "invalid_credentials" };
       }
 
@@ -42,7 +40,6 @@ class Controller {
           },
           { where: { email: email } }
         );
-        console.log(addIMEI, "success add imei");
       } else {
         if (findUser.user_imei !== user_imei) {
           throw { name: "invalid_imei" };
@@ -65,12 +62,10 @@ class Controller {
         IMEI: findUser.user_imei,
       };
 
-      console.log(payload, "ini dari user");
       const access_token = createToken(payload);
       res.status(200).json({ payload, access_token });
     } catch (error) {
       next(error);
-      console.log(error);
     }
   }
 
@@ -79,7 +74,6 @@ class Controller {
       let user = await models.users.findAll();
       res.status(200).json(user);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -110,7 +104,6 @@ class Controller {
       });
       res.status(200).json({ detailEmployee, jobTitle });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
