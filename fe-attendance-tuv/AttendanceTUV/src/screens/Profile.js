@@ -160,6 +160,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: '2%',
+    borderBottomWidth: 1,
+    borderColor: '#CCCCCC',
   },
   containerLogo: {
     marginTop: '2%',

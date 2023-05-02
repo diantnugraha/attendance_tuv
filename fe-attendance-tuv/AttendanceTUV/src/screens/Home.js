@@ -5,10 +5,10 @@ import {
   View,
   ScrollView,
   SafeAreaView,
-  RefreshControl
+  RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {Button} from 'react-native-paper';
-import ComponentCurrentDate from '../components/ComponentCurrentDate';
 import GetLocation from 'react-native-get-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect, useState} from 'react';
@@ -30,6 +30,13 @@ export default function Home({navigation}) {
     state => state.detailAttendance.data,
   );
 
+  const currentDate = new Date();
+  let currentDay = currentDate
+    .toLocaleDateString('en-us', {weekday: 'long'})
+    .split(',')[0];
+  const currentMonth = currentDate.toLocaleString('default', {month: 'long'});
+  const currentDateNumber = currentDate.getDate();
+  const currentYearNumber = currentDate.getFullYear();
 
   const [employee_latitude, setLatitude] = useState('');
   const [employee_longitude, setLongitude] = useState('');
@@ -41,6 +48,7 @@ export default function Home({navigation}) {
   const [status, setStatus] = useState('');
   const [location, setLocation] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const getRoad = useSelector(state => state.locationUser.data);
   const getDeviceNumber = async () => {
@@ -115,14 +123,18 @@ export default function Home({navigation}) {
     }
   };
 
-  const fetchData = () =>{
+  const fetchData = () => {
     getDeviceNumber();
     getCurrentLocation();
     getStatus();
+    currentDay;
+    currentDateNumber;
+    currentMonth;
+    currentYearNumber;
     dispatch(fetchDetailUser());
     dispatch(detailAttendance());
     dispatch(fetchCurrentLocation(location));
-  }
+  };
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -135,14 +147,19 @@ export default function Home({navigation}) {
   }, [location]);
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     getDeviceNumber();
     getCurrentLocation();
     getStatus();
     dispatch(fetchDetailUser());
     dispatch(detailAttendance());
   }, [dispatch]);
-
-
 
   const getStatus = async () => {
     setIsLoading(true);
@@ -173,10 +190,7 @@ export default function Home({navigation}) {
       }
     } else {
       try {
-        await detailAttendance();
-        await getCurrentLocation();
         await postAttendanceOut();
-        await detailAttendanceUser();
         setStatus('in');
         await AsyncStorage.setItem('toggleStatus', 'in');
       } catch (error) {
@@ -193,185 +207,195 @@ export default function Home({navigation}) {
         <View style={styles.containerHeader}>
           <SmallLogo style={styles.containerLogo} />
         </View>
-        <View style={styles.containerProfile}>
-          <Image
-            style={styles.styleImage}
-            source={{
-              uri: 'https://www.shareicon.net/data/512x512/2016/05/24/770117_people_512x512.png',
-            }}
-          />
-          <View style={styles.containerProfileDetail}>
-            <Text style={styles.textName}>
-              {detailUserData?.detailEmployee?.employee_name}
-            </Text>
-            <Text style={styles.textTitle}>
-              {detailUserData?.jobTitle?.name}
-            </Text>
-          </View>
-        </View>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={styles.containerAllContents}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }>
-          <View
-            style={{
-              marginHorizontal: '5%',
-              marginTop: '15%',
-              marginBottom: '5%',
-            }}>
-            <Text style={styles.textWelcome}>
-              Welcome Back, {detailUserData?.detailEmployee?.employee_nickname}{' '}
-              !
-            </Text>
-            <Text style={styles.textReady}>
-              Are you ready to working today?
-            </Text>
-          </View>
-          <View style={styles.containerContentClock}>
-            <ComponentLiveTime />
-            <ComponentCurrentDate />
-
-            <View style={{marginHorizontal: '5%', marginVertical: '5%'}}>
-              <Button
-                style={{paddingHorizontal: '10%'}}
-                onPress={handleToggleButton}
-                mode="contained"
-                buttonColor="#001ED2">
-                {isLoading ? (
-                  <Icon name="stopwatch-outline" size={16} color="#FFFFFF">
-                    Loading
-                  </Icon>
-                ) : (
-                  <Text
-                    style={{
-                      color: '#FFFFFF',
-                      fontSize: 16,
-                      fontFamily: 'Poppins-SemiBold',
-                    }}>
-                    {status === 'in' ? 'Check-in' : 'Check-out'}
-                  </Text>
-                )}
-              </Button>
-              <View style={styles.containerLocation}>
-                <Icon
-                  name="location"
-                  style={{marginTop: '5.5%'}}
-                  size={18}
-                  color="#808080"></Icon>
-                <Text
-                  style={styles.textNameRoad}
-                  numberOfLines={2}
-                  ellipsizeMode="tail">
-                  {getRoad?.display_name}
-                </Text>
-              </View>
-              <View style={styles.containerAttendanceContent}>
-                {/* <View style={styles.containerStatus}>
-                  <Icon name="time" size={40} color="#001ED2" />
-                  <Text style={styles.textStatus}>
-                    {detailUserAttendanceData?.attendance_time_in.slice(0, 5)}
-                  </Text>
-                  <Text
-                    style={{color: '#808080', fontFamily: 'Poppins-Regular'}}>
-                    Clock In
-                  </Text>
-                </View> */}
-                <View style={styles.containerStatus}>
-                  <Icon name="time" size={40} color="#001ED2" />
-                  {detailUserAttendanceData?.attendance_time_in ? (
-                    <>
-                      <Text style={styles.textStatus}>
-                        {detailUserAttendanceData.attendance_time_in.slice(
-                          0,
-                          5,
-                        )}
-                      </Text>
-                      <Text
-                        style={{
-                          color: '#808080',
-                          fontFamily: 'Poppins-Regular',
-                        }}>
-                        Clock In
-                      </Text>
-                    </>
-                  ) : (
-                    <>
-                      <Text style={styles.textStatus}>.. : ..</Text>
-                      <Text
-                        style={{
-                          color: '#808080',
-                          fontFamily: 'Poppins-Regular',
-                        }}>
-                        Clock In
-                      </Text>
-                    </>
-                  )}
-                </View>
-                <View style={styles.containerStatus}>
-                  <Icon name="timer" size={40} color="#001ED2" />
-                  {detailUserAttendanceData?.attendance_time_out ? (
-                    <>
-                      <Text style={styles.textStatus}>
-                        {detailUserAttendanceData.attendance_time_out.slice(
-                          0,
-                          5,
-                        )}
-                      </Text>
-                      <Text
-                        style={{
-                          color: '#808080',
-                          fontFamily: 'Poppins-Regular',
-                        }}>
-                        Clock Out
-                      </Text>
-                    </>
-                  ) : (
-                    <>
-                      <Text style={styles.textStatus}>.. : ..</Text>
-                      <Text
-                        style={{
-                          color: '#808080',
-                          fontFamily: 'Poppins-Regular',
-                        }}>
-                        Clock Out
-                      </Text>
-                    </>
-                  )}
-                </View>
-                <View style={styles.containerStatus}>
-                  <Icon name="stopwatch" size={40} color="#001ED2" />
-                  {detailUserAttendanceData?.total_hours ? (
-                    <>
-                      <Text style={styles.textStatus}>
-                        {detailUserAttendanceData.total_hours} Hrs
-                      </Text>
-                      <Text
-                        style={{
-                          color: '#808080',
-                          fontFamily: 'Poppins-Regular',
-                        }}>
-                        Work Hr's
-                      </Text>
-                    </>
-                  ) : (
-                    <>
-                      <Text style={styles.textStatus}>Hrs</Text>
-                      <Text
-                        style={{
-                          color: '#808080',
-                          fontFamily: 'Poppins-Regular',
-                        }}>
-                        Work Hr's
-                      </Text>
-                    </>
-                  )}
-                </View>
-              </View>
+        {loading ? (
+          <View style={styles.containerProfile}>
+            <View
+              style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+              <ActivityIndicator size="large" color="#0000ff" />
             </View>
           </View>
-        </ScrollView>
+        ) : (
+          <View style={styles.containerProfile}>
+            <Image
+              style={styles.styleImage}
+              source={{
+                uri: 'https://www.shareicon.net/data/512x512/2016/05/24/770117_people_512x512.png',
+              }}
+            />
+            <View style={styles.containerProfileDetail}>
+              <Text style={styles.textName}>
+                {detailUserData?.detailEmployee?.employee_name}
+              </Text>
+              <Text style={styles.textTitle}>
+                {detailUserData?.jobTitle?.name}
+              </Text>
+            </View>
+          </View>
+        )}
+        <View style={{flex: 1}}>
+          {loading ? (
+            <View style={styles.containerAllContentsLoading} >
+                <ActivityIndicator size="large" color="#001ED2" />
+            </View>
+          ) : (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              style={styles.containerAllContents}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }>
+              <View
+                style={{
+                  marginHorizontal: '5%',
+                  marginTop: '15%',
+                  marginBottom: '5%',
+                }}>
+                <Text style={styles.textWelcome}>
+                  Welcome Back,{' '}
+                  {detailUserData?.detailEmployee?.employee_nickname} !
+                </Text>
+                <Text style={styles.textReady}>
+                  Are you ready to working today?
+                </Text>
+              </View>
+              <View style={styles.containerContentClock}>
+                <ComponentLiveTime />
+                <Text style={styles.textMonth}>
+                  {currentDay}, {currentDateNumber} {currentMonth}{' '}
+                  {currentYearNumber}
+                </Text>
+
+                <View style={{marginHorizontal: '5%', marginVertical: '5%'}}>
+                  <Button
+                    style={{paddingHorizontal: '10%'}}
+                    onPress={handleToggleButton}
+                    mode="contained"
+                    buttonColor="#001ED2">
+                    {isLoading ? (
+                      <Icon name="stopwatch-outline" size={16} color="#FFFFFF">
+                        Loading
+                      </Icon>
+                    ) : (
+                      <Text
+                        style={{
+                          color: '#FFFFFF',
+                          fontSize: 16,
+                          fontFamily: 'Poppins-SemiBold',
+                        }}>
+                        {status === 'in' ? 'Check-in' : 'Check-out'}
+                      </Text>
+                    )}
+                  </Button>
+                  <View style={styles.containerLocation}>
+                    <Icon
+                      name="location"
+                      style={{marginTop: '5.5%'}}
+                      size={18}
+                      color="#808080"></Icon>
+                    <Text
+                      style={styles.textNameRoad}
+                      numberOfLines={2}
+                      ellipsizeMode="tail">
+                      {getRoad?.display_name}
+                    </Text>
+                  </View>
+                  <View style={styles.containerAttendanceContent}>
+                    <View style={styles.containerStatus}>
+                      <Icon name="time" size={40} color="#001ED2" />
+                      {detailUserAttendanceData?.attendance_time_in ? (
+                        <>
+                          <Text style={styles.textStatus}>
+                            {detailUserAttendanceData?.attendance_time_in.slice(
+                              0,
+                              5,
+                            )}
+                          </Text>
+                          <Text
+                            style={{
+                              color: '#808080',
+                              fontFamily: 'Poppins-Regular',
+                            }}>
+                            Clock In
+                          </Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text style={styles.textStatus}>.. : ..</Text>
+                          <Text
+                            style={{
+                              color: '#808080',
+                              fontFamily: 'Poppins-Regular',
+                            }}>
+                            Clock In
+                          </Text>
+                        </>
+                      )}
+                    </View>
+                    <View style={styles.containerStatus}>
+                      <Icon name="timer" size={40} color="#001ED2" />
+                      {detailUserAttendanceData?.attendance_time_out ? (
+                        <>
+                          <Text style={styles.textStatus}>
+                            {detailUserAttendanceData?.attendance_time_out.slice(
+                              0,
+                              5,
+                            )}
+                          </Text>
+                          <Text
+                            style={{
+                              color: '#808080',
+                              fontFamily: 'Poppins-Regular',
+                            }}>
+                            Clock Out
+                          </Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text style={styles.textStatus}>.. : ..</Text>
+                          <Text
+                            style={{
+                              color: '#808080',
+                              fontFamily: 'Poppins-Regular',
+                            }}>
+                            Clock Out
+                          </Text>
+                        </>
+                      )}
+                    </View>
+                    <View style={styles.containerStatus}>
+                      <Icon name="stopwatch" size={40} color="#001ED2" />
+                      {detailUserAttendanceData?.total_hours ? (
+                        <>
+                          <Text style={styles.textStatus}>
+                            {detailUserAttendanceData.total_hours} Hrs
+                          </Text>
+                          <Text
+                            style={{
+                              color: '#808080',
+                              fontFamily: 'Poppins-Regular',
+                            }}>
+                            Work Hr's
+                          </Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text style={styles.textStatus}>Hrs</Text>
+                          <Text
+                            style={{
+                              color: '#808080',
+                              fontFamily: 'Poppins-Regular',
+                            }}>
+                            Work Hr's
+                          </Text>
+                        </>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
+          )}
+        </View>
       </SafeAreaView>
     </>
   );
@@ -383,15 +407,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#001ED2',
   },
   containerAllContents: {
+    flex: 1,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
     backgroundColor: '#FFFFFF',
     marginTop: '-10%',
   },
+  containerAllContentsLoading: {
+    flex: 1,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    backgroundColor: '#FFFFFF',
+    marginTop: '-10%',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   containerHeader: {
     backgroundColor: '#001ED2',
     height: '10%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   containerImage: {
     alignItems: 'center',
@@ -534,5 +568,10 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  textMonth: {
+    fontFamily: 'Poppins-Regular',
+    color: '#808080',
+    fontSize: 16,
   },
 });

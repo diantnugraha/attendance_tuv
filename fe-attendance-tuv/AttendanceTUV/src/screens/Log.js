@@ -150,4 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: '5%',
   },
+  containerLogo: {
+    marginTop: '2%',
+  },
 });

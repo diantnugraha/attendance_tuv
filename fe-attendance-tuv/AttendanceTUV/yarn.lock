@@ -6392,10 +6392,22 @@ react-native-gradle-plugin@^0.71.17:
   resolved "https://registry.npmjs.org/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.17.tgz"
   integrity sha512-OXXYgpISEqERwjSlaCiaQY6cTY5CH6j73gdkWpK0hedxtiWMWgH+i5TOi4hIGYitm9kQBeyDu+wim9fA8ROFJA==
 
+react-native-lazyload@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/react-native-lazyload/-/react-native-lazyload-1.1.0.tgz"
+  integrity sha512-HiWrfYvS/5ZG2wLbF9evybvtX+4d51kwYwcBmIDXZKflFDpmdK8H78m5H70HXZ+/UILKFY9/DlePJeITbylS/g==
+  dependencies:
+    react-native-scrollable-mixin "^1.0.1"
+
 react-native-linear-gradient@^2.5.6, react-native-linear-gradient@^2.6.2:
   version "2.6.2"
   resolved "https://registry.npmjs.org/react-native-linear-gradient/-/react-native-linear-gradient-2.6.2.tgz"
   integrity sha512-Z8Xxvupsex+9BBFoSYS87bilNPWcRfRsGC0cpJk72Nxb5p2nEkGSBv73xZbEHnW2mUFvP+huYxrVvjZkr/gRjQ==
+
+react-native-measure-layout-scrollview@^1.1.0:
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/react-native-measure-layout-scrollview/-/react-native-measure-layout-scrollview-1.1.1.tgz"
+  integrity sha512-ZhK4M3RMiGHu6KWEyYRfy3eJgvZtBcUJJ64sWgNX7XqUBnjYOJYgrzwsmnYS/kSIj4nJyBi97MANx3RC+GSucA==
 
 react-native-onboarding-swiper@^1.2.0:
   version "1.2.0"
@@ -6412,6 +6424,11 @@ react-native-paper@^5.5.2, "react-native-paper@>= 3.0.0":
     "@callstack/react-theme-provider" "^3.0.8"
     color "^3.1.2"
     use-latest-callback "^0.1.5"
+
+react-native-prototype-to-scrollview@^1.1.0:
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/react-native-prototype-to-scrollview/-/react-native-prototype-to-scrollview-1.1.1.tgz"
+  integrity sha512-2Pj7xTNXAGzXxHhDHHP2TnANFkBqAINv1ojrLmX+nKvJz3X6Z2wYC9dGLg8uFwSSsmInABfyTnE0fKAZjt4u3Q==
 
 react-native-really-awesome-button@^2.0.4:
   version "2.0.4"
@@ -6430,6 +6447,19 @@ react-native-screens@^3.20.0, "react-native-screens@>= 3.0.0":
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
+
+react-native-scroll-lazy@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/react-native-scroll-lazy/-/react-native-scroll-lazy-1.0.1.tgz"
+  integrity sha512-BdRdPQ5SKiHu16MCMXD/csJqJWIbskUTCp767/o71y5N1J37BKGG855w4iP4uAzGdpCm/UYS2lCtOclNy+AQeg==
+  dependencies:
+    react-native-measure-layout-scrollview "^1.1.0"
+    react-native-prototype-to-scrollview "^1.1.0"
+
+react-native-scrollable-mixin@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.npmjs.org/react-native-scrollable-mixin/-/react-native-scrollable-mixin-1.0.1.tgz"
+  integrity sha512-haw7VtcK0Vg1p7CTE8vzhltICPhfuzLUNR1m9Rh55VYEGkD3o765Y5YTu88iA32uV/hMhJUopP5Tex/SvNidoA==
 
 react-native-skeleton-placeholder@^5.2.4:
   version "5.2.4"
