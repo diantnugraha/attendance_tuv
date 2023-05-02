@@ -65,6 +65,7 @@ class Controller {
       const access_token = createToken(payload);
       res.status(200).json({ payload, access_token });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }

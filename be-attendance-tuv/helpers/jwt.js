@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
-const SECRET = "HRISRTUV";
+require('dotenv').config();
 
-const createToken = (payload) => jwt.sign(payload, SECRET);
-const verifyToken = (token) => jwt.verify(token, SECRET);
+const createToken = (payload) => jwt.sign(payload, process.env.SECRET);
+const verifyToken = (token) => jwt.verify(token, process.env.SECRET);
 
 module.exports = { createToken, verifyToken };
