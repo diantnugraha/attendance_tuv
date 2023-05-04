@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const client = axios.create({
-  baseURL: 'https://1eab-117-102-92-164.ngrok-free.app/',
+  baseURL: 'https://stage-attendance-hris.tuv-nord.co.id/',
 });
 
 export default client;
